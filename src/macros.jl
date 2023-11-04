@@ -119,6 +119,7 @@ struct TestItem
     default_imports::Bool
     setups::Vector{Symbol}
     retries::Int
+    skip::Union{Bool,Expr}
     file::String
     line::Int
     project_root::String
@@ -130,10 +131,10 @@ struct TestItem
     stats::Vector{PerfStats} # populated when the test item is finished running
     scheduled_for_evaluation::ScheduledForEvaluation # to keep track of whether the test item has been scheduled for evaluation
 end
-function TestItem(number, name, id, tags, default_imports, setups, retries, file, line, project_root, code)
+function TestItem(number, name, id, tags, default_imports, setups, retries, skip, file, line, project_root, code)
     _id = @something(id, repr(hash(name, hash(relpath(file, project_root)))))
     return TestItem(
-        number, name, _id, tags, default_imports, setups, retries, file, line, project_root, code,
+        number, name, _id, tags, default_imports, setups, retries, skip, file, line, project_root, code,
         TestSetup[],
         Ref{Int}(0),
         DefaultTestSet[],
@@ -144,7 +145,7 @@ function TestItem(number, name, id, tags, default_imports, setups, retries, file
 end
 
 """
-    @testitem "name" [tags=[] setup=[] retries=0 default_imports=true] begin
+    @testitem "name" [tags=[] setup=[] retries=0 skip=false default_imports=true] begin
         # code that will be run as tests
     end
 
@@ -225,6 +226,7 @@ macro testitem(nm, exs...)
     retries = 0
     tags = Symbol[]
     setup = Any[]
+    skip = false
     _id = nothing
     _run = true  # useful for testing `@testitem` itself
     _source = QuoteNode(__source__)
@@ -247,7 +249,12 @@ macro testitem(nm, exs...)
                 setup = map(Symbol, setup.args)
             elseif kw == :retries
                 retries = ex.args[2]
-                @assert retries isa Integer "`default_imports` keyword must be passed an `Integer`"
+                @assert retries isa Integer "`retries` keyword must be passed an `Integer`"
+            elseif kw == :skip
+                skip = ex.args[2]
+                # If the `Expr` doesn't evaluate to a Bool, throws at runtime.
+                @show skip
+                @assert skip isa Union{Bool,Expr} "`skip` keyword must be passed a `Bool`"
             elseif kw == :_id
                 _id = ex.args[2]
                 # This will always be written to the JUnit XML as a String, require the user
@@ -270,9 +277,11 @@ macro testitem(nm, exs...)
     end
     q = QuoteNode(exs[end])
     ti = gensym(:ti)
+    @show skip
     esc(quote
         let $ti = $TestItem(
-            $Ref(0), $nm, $_id, $tags, $default_imports, $setup, $retries,
+            # $Ref(0), $nm, $_id, $tags, $default_imports, $setup, $retries, $(QuoteNode(skip)),
+            $Ref(0), $nm, $_id, $tags, $default_imports, $setup, $retries, $skip,
             $String($_source.file), $_source.line,
             $gettls(:__RE_TEST_PROJECT__, "."),
             $q,
