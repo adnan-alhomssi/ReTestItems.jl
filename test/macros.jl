@@ -1,4 +1,3 @@
-using AutoHashEquals
 using ReTestItems
 using Test
 
@@ -260,7 +259,7 @@ end
         # A single "skipped" result should be recorded. Test uses `Broken` for skipped.
         @test only(ts.results) isa Test.Broken
         # Since no test was run, the stats should be empty / zeroed.
-        @test ti.results.stats == ReTestItems.PerfStats()
+        @test ti_result.stats == ReTestItems.PerfStats()
     end
     # test case `skip` is a `Bool`
     ti = @testitem "skip isa bool" skip=true _run=false begin
