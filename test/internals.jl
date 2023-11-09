@@ -282,7 +282,7 @@ end
     ti = @testitem("x", skip=:(x = 1; x + x == 2), _run=false, begin end)
     @test should_skip(ti)
     ti = @testitem("x", skip=:(x = 1; x + x != 2), _run=false, begin end)
-    @test should_skip(ti)
+    @test !should_skip(ti)
 
     ti = @testitem("x", skip=:(x = 1; x + x), _run=false, begin end)
     @test_throws "Test item \"x\" `skip` keyword must be a `Bool`, got `skip=2`" should_skip(ti)
