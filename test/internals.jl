@@ -260,7 +260,7 @@ end
     ctx = ReTestItems.TestContext("test_ctx", 1)
     ti_res = ReTestItems.skiptestitem(ti, ctx)
     @test ti_res isa TestItemResult
-    test_res = only(res.testset.results)
+    test_res = only(ti_res.testset.results)
     @test test_res isa Test.Result
     @test test_res isa Test.Broken
     @test test_res.test_type == :skipped
