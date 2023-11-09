@@ -136,7 +136,7 @@ A skipped test-item logs that it is being skipped and records a single "skipped"
 If `skip` is an expression, it will be run in a new module similar to a test-item, and must return a `Bool`.
 
 ```julia
-@testitem "orc v2" skip=(using LLVM; LLVM.has_orc_v2()) begin
+@testitem "orc v2" skip=:(using LLVM; LLVM.has_orc_v2()) begin
     # tests
 end
 ```
