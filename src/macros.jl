@@ -220,6 +220,18 @@ If a `@testitem` passes on retry, then it will be recorded as passing in the tes
     @testitem "Flaky test" retries=1 begin
         @test rand() < 1e-4
     end
+
+If a `@testitem` needs to be skipped, then you can set the `skip` keyword.
+Either pass `skip=true` to unconditionally skip the test item, or pass `skip` an
+expression that returns a `Bool` to determine if the testitem should be skipped.
+
+    @testitem "Skip on old Julia" skip=VERSION < v"1.9" begin
+        v = [1]
+        @test 0 == @allocations sum(v)
+    end
+
+The `skip` expression is run in its own module, just like a test-item.
+No code inside a `@testitem` is run when a test-item is skipped.
 """
 macro testitem(nm, exs...)
     default_imports = true

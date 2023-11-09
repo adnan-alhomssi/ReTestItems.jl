@@ -129,6 +129,18 @@ end
 The `setup` is run once on each worker process that requires it;
 it is not run before every `@testitem` that depends on the setup.
 
+#### Skipping tests
+
+The `skip` keyword can be used to skip a `@testitem`, meaning no code inside that test-item will run.
+A skipped test-item logs that it is being skipped and records a single "skipped" test result.
+If `skip` is an expression, it will be run in a new module similar to a test-item, and must return a `Bool`.
+
+```julia
+@testitem "orc v2" skip=(using LLVM; LLVM.has_orc_v2()) begin
+    # tests
+end
+```
+
 #### Post-testitem hook
 
 If there is something that should be checked after every single `@testitem`, then it's possible to pass an expression to `runtests` using the `test_end_expr` keyword.
