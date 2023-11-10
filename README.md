@@ -149,7 +149,7 @@ If `skip` is an given an `Expr`, it will be run in a new module similar to a tes
 end
 ```
 
-Skipped test-items appear in the test report as a single skipped test, similar to `@test_skip`.
+Skipped test-items appear in the test results as a single skipped test, similar to `@test_skip`.
 
 #### Post-testitem hook
 
