@@ -290,7 +290,6 @@ macro testitem(nm, exs...)
     ti = gensym(:ti)
     esc(quote
         let $ti = $TestItem(
-            # $Ref(0), $nm, $_id, $tags, $default_imports, $setup, $retries, $(QuoteNode(skip)),
             $Ref(0), $nm, $_id, $tags, $default_imports, $setup, $retries, $skip,
             $String($_source.file), $_source.line,
             $gettls(:__RE_TEST_PROJECT__, "."),
