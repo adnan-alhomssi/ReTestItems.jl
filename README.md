@@ -149,6 +149,8 @@ If `skip` is an given an `Expr`, it will be run in a new module similar to a tes
 end
 ```
 
+Skipped test-items appear in the test report as a single skipped test, similar to `@test_skip`.
+
 #### Post-testitem hook
 
 If there is something that should be checked after every single `@testitem`, then it's possible to pass an expression to `runtests` using the `test_end_expr` keyword.
